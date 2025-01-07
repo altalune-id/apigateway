@@ -5,17 +5,16 @@ import (
 	"strings"
 )
 
-const NoahApp = "noah"
+const (
+	NoahApp = "noah"
+	AppName = "apigateway"
+)
 
 var (
 	AwsAccountID = os.Getenv("AWS_ACCOUNT_ID")
 	AwsRegion    = os.Getenv("AWS_REGION")
 )
 
-func stageName(stage string) string {
+func StageName(stage string) string {
 	return strings.ToLower(stage)
-}
-
-func NoahExportedLambdaARN(function string, stage string) string {
-	return NoahApp + "-" + function + "-" + stageName(stage) + "-arn"
 }

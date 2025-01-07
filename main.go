@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/altalune-id/apigateway/config"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 
@@ -46,7 +44,7 @@ func env() *awscdk.Environment {
 	}
 
 	if config.AwsRegion != "" {
-		region = os.Getenv("AWS_REGION")
+		region = config.AwsRegion
 	}
 
 	return &awscdk.Environment{
