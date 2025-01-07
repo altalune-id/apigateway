@@ -29,7 +29,7 @@ func NewNoahApi(stack awscdk.Stack, stage string) {
 	lambdaFunction.AddPermission(jsii.String("ApiGatewayInvoke"), &awslambda.Permission{
 		Action:    jsii.String("lambda:InvokeFunction"),
 		Principal: principal,
-		SourceArn: jsii.String(*api.ApiId() + "/*"),
+		SourceArn: jsii.String("arn:aws:execute-api:" + *stack.Region() + ":" + *stack.Account() + ":" + *api.ApiId() + "/*"),
 	})
 
 	integ := awsapigatewayv2integrations.NewHttpLambdaIntegration(
