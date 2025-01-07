@@ -21,17 +21,10 @@ func NewNoahApi(stack awscdk.Stack, stage string) {
 	})
 
 	lambdaID := jsii.String(config.NoahApp + "-lambda")
-	lambdaIntegration := jsii.String(config.NoahApp + "-lambda-integration")
 	lambdaArn := awscdk.Fn_ImportValue(jsii.String(config.NoahExportedLambdaARN("restapi", stage)))
 	lambdaFunction := awslambda.Function_FromFunctionArn(stack, lambdaID, lambdaArn)
-	principal := awsiam.NewServicePrincipal(jsii.String("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{})
 
-	lambdaFunction.AddPermission(jsii.String("ApiGatewayInvoke"), &awslambda.Permission{
-		Action:    jsii.String("lambda:InvokeFunction"),
-		Principal: principal,
-		SourceArn: jsii.String("arn:aws:execute-api:" + *stack.Region() + ":" + *stack.Account() + ":" + *api.ApiId() + "/*"),
-	})
-
+	lambdaIntegration := jsii.String(config.NoahApp + "-lambda-integration")
 	integ := awsapigatewayv2integrations.NewHttpLambdaIntegration(
 		lambdaIntegration,
 		lambdaFunction,
@@ -42,6 +35,13 @@ func NewNoahApi(stack awscdk.Stack, stage string) {
 		Integration: integ,
 		Methods:     &[]awsapigatewayv2.HttpMethod{awsapigatewayv2.HttpMethod_ANY},
 		Path:        jsii.String("/{proxy+}"),
+	})
+
+	principal := awsiam.NewServicePrincipal(jsii.String("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{})
+	lambdaFunction.AddPermission(jsii.String("ApiGatewayInvoke"), &awslambda.Permission{
+		Action:    jsii.String("lambda:InvokeFunction"),
+		Principal: principal,
+		SourceArn: jsii.String("arn:aws:execute-api:" + *stack.Region() + ":" + *stack.Account() + ":" + *api.ApiId() + "/*"),
 	})
 
 	awscdk.NewCfnOutput(stack, apigwEndpoint, &awscdk.CfnOutputProps{
