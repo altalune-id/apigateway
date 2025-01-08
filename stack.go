@@ -8,16 +8,11 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type StackProps struct {
-	awscdk.StackProps
-	Stage string
-}
-
-func NewStack(scope constructs.Construct, props *StackProps) awscdk.Stack {
+func NewStack(scope constructs.Construct, props *awscdk.StackProps, cfg *config.Config) awscdk.Stack {
 	stackID := jsii.String(config.AppName)
-	stack := awscdk.NewStack(scope, stackID, &props.StackProps)
+	stack := awscdk.NewStack(scope, stackID, props)
 
-	httpapi.NewNoahApi(stack, props.Stage)
+	_ = httpapi.NewNoahApi(stack, cfg)
 
 	return stack
 }
